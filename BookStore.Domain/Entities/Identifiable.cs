@@ -2,6 +2,7 @@
 {
     public class Identifiable
     {
-        public Guid Id { get; set; }        
+        public Guid Id { get; set; }
+        public bool Deleted { get; set; } = false;
     }
 }
