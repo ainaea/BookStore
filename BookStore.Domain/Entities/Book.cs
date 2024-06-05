@@ -14,6 +14,7 @@ namespace BookStore.Domain.Entities
         public string Title { get => Name; set { Name = value; } }
         [Range(1000, int.MaxValue)]
         public int Year { get; set; }
+        public string ISBN { get; set; }
         public virtual Author? Author { get; set; }
 
         public virtual Genre? Genre { get; set; }
