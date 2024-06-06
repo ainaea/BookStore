@@ -10,6 +10,7 @@ namespace BookStore.Domain.Entities
     {
         public Guid UserId { get; set; }
         public virtual IEnumerable<CartedBook>? CartedBooks { get; set; }
+        public PaymentEnum PaymentStatus { get; set; } = PaymentEnum.Pending;
 
     }
 }
