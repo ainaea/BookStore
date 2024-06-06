@@ -1,5 +1,6 @@
 ﻿using BookStore.Application.Interfaces;
 using BookStore.Domain.Entities;
+using Dapper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,48 +14,77 @@ namespace BookStore.Infrastructure.Implementations
     public class Repository<T> : IRepository<T> where T : Identifiable
     {
         private readonly BookStoreDbContext dbContext;
+        private readonly SqlConnectionFactory connectionFactory;
         private DbSet<T> dbSet;
-        public Repository(BookStoreDbContext dbContext)
+        public Repository(BookStoreDbContext dbContext, SqlConnectionFactory connectionFactory)
         {
             this.dbContext = dbContext;
+            this.connectionFactory = connectionFactory;
             dbSet = dbContext.Set<T>();
         }
         public async Task Add(T entity)
         {
-            await dbSet.AddAsync(entity);
+            using (var connection = connectionFactory.CreateConnection())
+            {
+                await connection.ExecuteAsync($"INSERT INTO {GetClassName()} ({string.Join(", ", typeof(T).GetProperties().Select(p => p.Name))}) VALUES ({string.Join(", ", typeof(T).GetProperties().Select(p => $"@{p.Name}"))})", entity);
+            }
+
         }
 
-        public async Task<T?> Get(Guid id)
+        public T? Get(Guid id)
         {
-            return await dbSet.FindAsync(id);
+            //return await dbSet.FindAsync(id);
+            using (var connection = connectionFactory.CreateConnection())
+            {
+                return connection.QueryFirstOrDefault<T>($"SELECT * FROM {GetClassName()} WHERE {nameof(Identifiable.Id)} = @id", new { id });
+            }
+        }
+        public IEnumerable<T>? GetAll()
+        {
+            using (var connection = connectionFactory.CreateConnection())
+            {
+                return connection.Query<T>($"SELECT * FROM {GetClassName()}");
+            }
+        }
+        public T? Get(Expression<Func<T, bool>> filter, string[]? includes)
+        {
+            return GetAll()?.AsQueryable<T>().Where(filter).FirstOrDefault();
         }
 
-        public async Task<T?> Get(Expression<Func<T, bool>> filter, string[]? includes)
+        public IEnumerable<T>? GetAll(Expression<Func<T, bool>> filter, string[]? includes = null, int count = int.MaxValue)
         {
-            IQueryable<T> query = GetQuerry(includes);
-            return await query.Where(filter).FirstOrDefaultAsync();
-        }
-
-        public async Task<IEnumerable<T>> GetAll(string[]? includes = null, int count = 20)
-        {
-            IQueryable<T> query = GetQuerry(includes);
-            return await query.Take(count).ToListAsync();
-        }
-
-        public async Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> filter, string[]? includes = null)
-        {
-            IQueryable<T> query = GetQuerry(includes);
-            return await query.Where(filter).ToListAsync();
-        }
+            IQueryable<T>? query = GetAll()?.AsQueryable<T>();
+            return query?.Where(filter)?.Take(count).ToList();
+        }        
 
         public void Remove(T entity)
         {
-            dbSet.Remove(entity);
+            using (var connection = connectionFactory.CreateConnection())
+            {
+                connection.Execute($"DELETE FROM {GetClassName()} WHERE {nameof(Identifiable.Id)} = @id", new { entity.Id });
+            }
+
         }
 
         public void Update(T entity)
         {
-            dbSet.Update(entity);
+            using (var connection = connectionFactory.CreateConnection())
+            {
+                var updateQuery = $"UPDATE {GetClassName()} SET ";
+                var parameters = new DynamicParameters();
+                parameters.AddDynamicParams(entity);
+                foreach (var property in typeof(T).GetProperties())
+                {
+                    updateQuery += $"{property.Name} = @{property.Name}, ";
+                    //parameters.AddDynamicParameter(property.Name, property.GetValue(entity));
+                }
+
+                updateQuery = updateQuery.TrimEnd(' ', ',');
+                updateQuery += $" WHERE {nameof(Identifiable.Id)} = {entity.Id}";
+
+                connection.Execute(updateQuery, parameters);
+            }
+
         }
         private IQueryable<T> GetQuerry(string[]? includes)
         {
@@ -68,5 +98,6 @@ namespace BookStore.Infrastructure.Implementations
             }
             return query;
         }
+        private string GetClassName() =>  typeof(T).Name+"s";
     }
 }
