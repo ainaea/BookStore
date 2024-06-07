@@ -13,6 +13,7 @@ namespace BookStore.Application.Interfaces
         public IRepository<Author> Authors { get; }
         public IRepository<Cart> Carts { get; }
         public IRepository<CartedBook> CartedBooks { get; }
+        public IRepository<Genre> Genres { get; }
         Task<int> Complete();
     }
 }
