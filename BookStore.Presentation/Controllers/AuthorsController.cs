@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Presentation.Controllers
 {
     [ApiController]
-    public class AuthorController : ControllerBase
+    public class AuthorsController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
 
-        public AuthorController(IUnitOfWork unitOfWork)
+        public AuthorsController(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
         }
