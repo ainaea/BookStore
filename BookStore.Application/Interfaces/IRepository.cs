@@ -6,8 +6,8 @@ namespace BookStore.Application.Interfaces
     public interface IRepository<T> where T: Identifiable
     {
         T? Get(Guid id);
-        T? Get(Expression<Func<T, bool>> filter, string[]? includes = null);
-        IEnumerable<T>? GetAll(Expression<Func<T, bool>> filter, string[]? includes = null, int count = 20);
+        T? Get(Expression<Func<T, bool>> filter, object[]? includes = null);
+        IEnumerable<T>? GetAll(Expression<Func<T, bool>> filter, object[]? includes = null, int count = 20);
         //Task<IEnumerable<T>> GetAll(Expression<Func<T, bool>> filter, string[]? includes = null);
         IEnumerable<T>? GetAll(object[]? includes = null);
         Task Add(T entity);

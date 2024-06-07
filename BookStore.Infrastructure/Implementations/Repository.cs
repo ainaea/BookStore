@@ -76,12 +76,12 @@ namespace BookStore.Infrastructure.Implementations
             }
 }
 
-        public T? Get(Expression<Func<T, bool>> filter, string[]? includes)
+        public T? Get(Expression<Func<T, bool>> filter, object[]? includes)
         {
             return GetAll(includes)?.AsQueryable<T>().Where(filter).FirstOrDefault();
         }
 
-        public IEnumerable<T>? GetAll(Expression<Func<T, bool>> filter, string[]? includes = null, int count = int.MaxValue)
+        public IEnumerable<T>? GetAll(Expression<Func<T, bool>> filter, object[]? includes = null, int count = int.MaxValue)
         {
             IQueryable<T>? query = GetAll(includes)?.AsQueryable<T>();
             return query?.Where(filter)?.Take(count).ToList();
