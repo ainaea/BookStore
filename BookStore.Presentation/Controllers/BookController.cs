@@ -14,7 +14,7 @@ namespace BookStore.Presentation.Controllers
     public class BookController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
-
+        private object[]? include = new object[] { typeof(Genre), typeof(Author) };
         public BookController(IUnitOfWork unitOfWork)
         {
             this.unitOfWork = unitOfWork;
@@ -22,7 +22,7 @@ namespace BookStore.Presentation.Controllers
         [HttpGet]
         public IActionResult Index()
         {
-            return Ok(unitOfWork.Books.GetAll()?.Select(a => MapToBookDTO(a)));
+            return Ok(unitOfWork.Books.GetAll(include)?.Select(a => MapToBookDTO(a)));
         }
         [HttpPost]
         public IActionResult AddBook([FromBody] BookDTO dto)
@@ -62,7 +62,7 @@ namespace BookStore.Presentation.Controllers
             var author = unitOfWork.Authors.Get(id);
             if (author == null)
                 return NotFound($"Author with Id {id} not found");
-            var book = unitOfWork.Books.GetAll(b => b.AuthorId == id);
+            var book = unitOfWork.Books.GetAll(b => b.AuthorId == id, includes: include);
             if (book == null)
                 return NotFound();
             return Ok( book.Select( b => MapToBookDTO(b)));
@@ -71,7 +71,7 @@ namespace BookStore.Presentation.Controllers
         [HttpGet]
         public IActionResult GetBooksByTitle([FromQuery] string title)
         {
-            var book = unitOfWork.Books.GetAll(b => b.Title.ToLower().Contains(title.ToLower()));
+            var book = unitOfWork.Books.GetAll(b => b.Title.ToLower().Contains(title.ToLower()), includes: include);
             if (book == null)
                 return NotFound();
             return Ok(book.Select(b => MapToBookDTO(b)));
@@ -82,7 +82,7 @@ namespace BookStore.Presentation.Controllers
             var genre = unitOfWork.Genres.Get(id);
             if (genre == null)
                 return NotFound($"Genre with Id {id} not found");
-            var book = unitOfWork.Books.GetAll(b => b.GenreId == id);
+            var book = unitOfWork.Books.GetAll(b => b.GenreId == id, includes: include);
             if (book == null)
                 return NotFound();
             return Ok(book.Select(b => MapToBookDTO(b)));
@@ -91,7 +91,7 @@ namespace BookStore.Presentation.Controllers
         [HttpGet]
         public IActionResult GetBooksByYear([FromQuery] int year)
         {
-            var book = unitOfWork.Books.GetAll(b => b.Year == year);
+            var book = unitOfWork.Books.GetAll(b => b.Year == year, includes: include);
             if (book == null)
                 return NotFound();
             return Ok(book.Select(b => MapToBookDTO(b)));
