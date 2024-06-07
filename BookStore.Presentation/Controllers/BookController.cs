@@ -29,6 +29,9 @@ namespace BookStore.Presentation.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            var checkResult = BasicChecks(dto);
+            if (checkResult != null)
+                return NotFound(checkResult);
             return Ok(unitOfWork.Books.Add(MapToBook(dto, null)));
         }
         [HttpPost]
@@ -39,6 +42,9 @@ namespace BookStore.Presentation.Controllers
             var book = unitOfWork.Books.Get(dto.Id);
             if (book == null)
                 return NotFound($"Book with Id {dto.Id} not found");
+            var checkResult = BasicChecks(dto);
+            if (checkResult != null)
+                return NotFound(checkResult);
             unitOfWork.Books.Update(MapToBook(dto, book));
             return Ok();
         }
@@ -50,7 +56,6 @@ namespace BookStore.Presentation.Controllers
                 return NotFound();
             return Ok(MapToBookDTO(book));
         }
-        [HttpPost]
         [HttpGet]
         public IActionResult GetBooksByAuthor([FromQuery] Guid id)
         {
@@ -97,12 +102,29 @@ namespace BookStore.Presentation.Controllers
         {
             if (!ModelState.IsValid)
                 return BadRequest(ModelState);
+            var checkResult = BasicChecks(dto);
+            if (checkResult != null)
+                return NotFound(checkResult);
             var book = unitOfWork.Books.Get(dto.Id);
             if (book == null)
                 return NotFound($"Book with Id {dto.Id} not found");
             unitOfWork.Books.Remove(MapToBook(dto, book));
             return Ok();
         }
+
+        private string? BasicChecks(BookDTO dto)
+        {
+            Guid authorId = dto.AuthorId;
+            var author = unitOfWork.Authors.Get(authorId);
+            if (author == null)
+                return "Author not found";
+            Guid genreId = dto.GenreId;
+            var genre = unitOfWork.Genres.Get(authorId);
+            if (genre == null)
+                return "Genre not found";
+            return null;
+        }
+
         public static Book MapToBook(BookDTO dto, Book? model)
         {
             //model should only be null during creation of new item
