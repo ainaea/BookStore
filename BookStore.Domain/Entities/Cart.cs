@@ -15,6 +15,10 @@ namespace BookStore.Domain.Entities
         public Guid UserId { get; private set; }
         public virtual IEnumerable<CartedBook>? CartedBooks { get; set; }
         public PaymentEnum PaymentStatus { get; set; } = PaymentEnum.Pending;
+        public Cart()
+        {
+            
+        }
 
     }
 }

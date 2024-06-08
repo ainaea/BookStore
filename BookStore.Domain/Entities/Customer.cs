@@ -12,5 +12,9 @@ namespace BookStore.Domain.Entities
         {
             
         }
+        public Customer(): base(string.Empty)
+        {
+            
+        }
     }
 }

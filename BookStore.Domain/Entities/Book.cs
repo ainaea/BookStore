@@ -26,5 +26,9 @@ namespace BookStore.Domain.Entities
         {
 
         }
+        public Book(): base(string.Empty)
+        {
+            
+        }
     }
 }

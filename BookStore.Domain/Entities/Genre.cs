@@ -13,5 +13,9 @@ namespace BookStore.Domain.Entities
         {
             Books = new List<Book>();
         }
+        public Genre(): base(string.Empty)
+        {
+            
+        }
     }
 }

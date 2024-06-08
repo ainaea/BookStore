@@ -13,5 +13,9 @@ namespace BookStore.Domain.Entities
         {
             Publications = new List<Book>();
         }
+        public Author(): base(string.Empty)
+        {
+            Publications = new List<Book>();
+        }        
     }
 }
