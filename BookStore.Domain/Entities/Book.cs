@@ -22,7 +22,7 @@ namespace BookStore.Domain.Entities
         public Guid GenreId { get; set; }
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
-        public Book(string bookname) : base(bookname)
+        public Book(string name) : base(name)
         {
 
         }

@@ -13,10 +13,6 @@ namespace BookStore.Domain.Entities
         public int Quantity { get; set; } = 1;
         public Guid BookId { get; set; }
         public Guid CartId { get; set; }
-        public virtual Book? Book { get; set; }
-        public CartedBook(Book book)
-        {
-            Book = book;
-        }
+        public virtual Book? Book { get; set; }        
     }
 }
