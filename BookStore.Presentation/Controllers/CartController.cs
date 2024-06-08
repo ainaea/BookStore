@@ -115,7 +115,7 @@ namespace BookStore.Presentation.Controllers
             if (currentUser == null)
                 return Forbid();
             var cart = unitOfWork.Carts.GetAll(c => c.UserId.ToString() == currentUser!.Id && c.PaymentStatus != PaymentEnum.Pending);
-            return Ok(cart.Select(c => MapToCartDTO(c)));
+            return Ok(cart?.Select(c => MapToCartDTO(c)));
         }
 
         public static Cart MapToCart(CartDTO dto,Guid userId, Cart? model)
