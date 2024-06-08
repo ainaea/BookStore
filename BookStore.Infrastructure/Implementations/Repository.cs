@@ -13,14 +13,14 @@ namespace BookStore.Infrastructure.Implementations
 {
     public class Repository<T> : IRepository<T> where T : Identifiable
     {
-        private readonly BookStoreDbContext dbContext;
+        //private readonly BookStoreDbContext dbContext;
         private readonly SqlConnectionFactory connectionFactory;
-        private DbSet<T> dbSet;
-        public Repository(BookStoreDbContext dbContext, SqlConnectionFactory connectionFactory)
+        //private DbSet<T> dbSet;
+        public Repository(/*BookStoreDbContext dbContext, */SqlConnectionFactory connectionFactory)
         {
-            this.dbContext = dbContext;
+            //this.dbContext = dbContext;
             this.connectionFactory = connectionFactory;
-            dbSet = dbContext.Set<T>();
+            //dbSet = dbContext.Set<T>();
         }
         public async Task Add(T entity)
         {
@@ -51,6 +51,7 @@ namespace BookStore.Infrastructure.Implementations
         {
             using (var connection = connectionFactory.CreateConnection())
             {
+                connection.Open();
                 var sql = $"SELECT * FROM {GetClassTableName()}";
                 if (includes != null)
                 {
@@ -116,18 +117,18 @@ namespace BookStore.Infrastructure.Implementations
             }
 
         }
-        private IQueryable<T> GetQuerry(string[]? includes)
-        {
-            IQueryable<T> query = dbSet;
-            if (includes != null)
-            {
-                foreach (var child in includes)
-                {
-                    query = query.Include(child);
-                }
-            }
-            return query;
-        }
-        private string GetClassTableName() =>  typeof(T).Name+"s";
+        //private IQueryable<T> GetQuerry(string[]? includes)
+        //{
+        //    IQueryable<T> query = dbSet;
+        //    if (includes != null)
+        //    {
+        //        foreach (var child in includes)
+        //        {
+        //            query = query.Include(child);
+        //        }
+        //    }
+        //    return query;
+        //}
+        private string GetClassTableName() => $"public.\"{typeof(T).Name + "s"}\"";
     }
 }
