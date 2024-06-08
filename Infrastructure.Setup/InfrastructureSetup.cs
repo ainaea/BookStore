@@ -19,7 +19,7 @@ namespace Infrastructure.Setup
                     .AddDefaultTokenProviders();            
             services.AddDbContextPool<BookStoreDbContext>(options => options.UseNpgsql(config.GetConnectionString("BookStoreConnection")));
 
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddSingleton(typeof(IRepository<>), typeof(Repository<>));
             services.AddSingleton<BookStoreDbContext, BookStoreDbContext>();
             services.AddSingleton<SqlConnectionFactory, SqlConnectionFactory>();
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
