@@ -16,12 +16,14 @@ namespace BookStore.Presentation.Controllers
         private readonly IUnitOfWork unitOfWork;
         private readonly UserManager<IdentityUser> userManager;
         private readonly ICartManager cartManager;
+        private readonly IPaymentService paymentService;
 
-        public CartController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager, ICartManager cartManager)
+        public CartController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager, ICartManager cartManager, IPaymentService paymentService)
         {
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
             this.cartManager = cartManager;
+            this.paymentService = paymentService;
         }
 
         [HttpGet]
@@ -87,8 +89,14 @@ namespace BookStore.Presentation.Controllers
             var cart = unitOfWork.Carts.GetAll(c => c.UserId.ToString() == currentUser!.Id && c.PaymentStatus == PaymentEnum.Pending)?.FirstOrDefault();
             if (cart == null)
                 return NotFound("No item found in cart");
+            var cartedBooks = unitOfWork.CartedBooks.GetAll( cb=> cb.CartId == cart.Id, new object[] { typeof(Book)});
+            cart.CartedBooks = cartedBooks;     //object to be used to get total cost from cart manager
 
-            bool paymentResponse = true; //to be replaced by a response from payment service
+            decimal totalCost = cartManager.GetCartTotal(cart);
+            if (totalCost <= decimal.Zero)
+                return NotFound("No valuable found in cart");
+
+            bool paymentResponse = await paymentService.TransferPayment(cart.Id, totalCost);//true; //to be replaced by a response from payment service
 
             if(paymentResponse)
             {
