@@ -24,6 +24,7 @@ namespace Infrastructure.Setup
             services.AddSingleton<SqlConnectionFactory, SqlConnectionFactory>();
             services.AddSingleton<IUnitOfWork, UnitOfWork>();
             services.AddSingleton<IPaymentService, PaymentService>();
+            services.AddSingleton<ICartManager, CartManager>();
         }        
     }
 }

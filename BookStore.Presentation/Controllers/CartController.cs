@@ -15,11 +15,13 @@ namespace BookStore.Presentation.Controllers
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly UserManager<IdentityUser> userManager;
+        private readonly ICartManager cartManager;
 
-        public CartController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager)
+        public CartController(IUnitOfWork unitOfWork, UserManager<IdentityUser> userManager, ICartManager cartManager)
         {
             this.unitOfWork = unitOfWork;
             this.userManager = userManager;
+            this.cartManager = cartManager;
         }
 
         [HttpGet]
