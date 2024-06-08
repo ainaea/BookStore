@@ -107,6 +107,16 @@ namespace BookStore.Presentation.Controllers
             return BadRequest("Transaction failed due to invalid data");
 
         }
+        [HttpPost]
+        [Route($"{nameof(GetCartHistory)}")]
+        public async Task<IActionResult> GetCartHistory()
+        {
+            var currentUser = await userManager.GetUserAsync(HttpContext.User);
+            if (currentUser == null)
+                return Forbid();
+            var cart = unitOfWork.Carts.GetAll(c => c.UserId.ToString() == currentUser!.Id && c.PaymentStatus != PaymentEnum.Pending);
+            return Ok(cart);
+        }
 
         public static Cart MapToCart(CartDTO dto,Guid userId, Cart? model)
         {
