@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace BookStore.Presentation.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class BookController : ControllerBase
     {
@@ -20,11 +20,13 @@ namespace BookStore.Presentation.Controllers
             this.unitOfWork = unitOfWork;
         }
         [HttpGet]
-        public IActionResult Index()
+        [Route($"{nameof(Books)}")]
+        public IActionResult Books()
         {
             return Ok(unitOfWork.Books.GetAll(include)?.Select(a => MapToBookDTO(a)));
         }
         [HttpPost]
+        [Route($"{nameof(AddBook)}")]
         public IActionResult AddBook([FromBody] BookDTO dto)
         {
             if (!ModelState.IsValid)
@@ -35,6 +37,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(unitOfWork.Books.Add(MapToBook(dto, null)));
         }
         [HttpPost]
+        [Route($"{nameof(EditBook)}")]
         public IActionResult EditBook([FromBody] BookDTO dto)
         {
             if (!ModelState.IsValid)
@@ -49,6 +52,7 @@ namespace BookStore.Presentation.Controllers
             return Ok();
         }
         [HttpGet]
+        [Route($"{nameof(GetBook)}/"+"{id}")]
         public IActionResult GetBook([FromQuery] Guid id)
         {
             var book = unitOfWork.Books.Get(id);
@@ -57,6 +61,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(MapToBookDTO(book));
         }
         [HttpGet]
+        [Route($"{nameof(GetBooksByAuthor)}/"+"{id}")]
         public IActionResult GetBooksByAuthor([FromQuery] Guid id)
         {
             var author = unitOfWork.Authors.Get(id);
@@ -69,6 +74,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpGet]
+        [Route("{action}/{title}")]
         public IActionResult GetBooksByTitle([FromQuery] string title)
         {
             var book = unitOfWork.Books.GetAll(b => b.Title.ToLower().Contains(title.ToLower()), includes: include);
@@ -77,6 +83,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(book.Select(b => MapToBookDTO(b)));
         }
         [HttpGet]
+        [Route("{action}/{id}")]
         public IActionResult GetBooksByGenre([FromQuery] Guid id)
         {
             var genre = unitOfWork.Genres.Get(id);
@@ -89,6 +96,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpGet]
+        [Route("{action}/{year}")]
         public IActionResult GetBooksByYear([FromQuery] int year)
         {
             var book = unitOfWork.Books.GetAll(b => b.Year == year, includes: include);
@@ -98,6 +106,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpPost]
+        [Route($"{nameof(DeleteBook)}")]
         public IActionResult DeleteBook([FromBody] BookDTO dto)
         {
             if (!ModelState.IsValid)

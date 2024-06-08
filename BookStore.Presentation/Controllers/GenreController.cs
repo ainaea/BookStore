@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BookStore.Presentation.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class GenreController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
@@ -16,11 +18,13 @@ namespace BookStore.Presentation.Controllers
             this.unitOfWork = unitOfWork;
         }
         [HttpGet]
-        public IActionResult Index()
+        [Route($"{nameof(GetAll)}")]
+        public IActionResult GetAll()
         {
             return Ok(unitOfWork.Genres.GetAll()?.Select(a => MapToGenreDTO(a)));
         }
         [HttpPost]
+        [Route($"{nameof(AddGenre)}")]
         public IActionResult AddGenre([FromBody] GenreDTO dto)
         {
             if (!ModelState.IsValid)
@@ -28,6 +32,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(unitOfWork.Genres.Add(MapToGenre(dto, null)));
         }
         [HttpPost]
+        [Route($"{nameof(EditGenre)}")]
         public IActionResult EditGenre([FromBody] GenreDTO dto)
         {
             if (!ModelState.IsValid)
@@ -47,6 +52,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(MapToGenreDTO(genre));
         }
         [HttpPost]
+        [Route($"{nameof(DeleteGenre)}")]
         public IActionResult DeleteGenre([FromBody] GenreDTO dto)
         {
             if (!ModelState.IsValid)

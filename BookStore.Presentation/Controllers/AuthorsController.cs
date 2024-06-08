@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace BookStore.Presentation.Controllers
 {
     [ApiController]
+    [Route("[controller]/")]
     public class AuthorsController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
@@ -15,11 +16,13 @@ namespace BookStore.Presentation.Controllers
             this.unitOfWork = unitOfWork;
         }
         [HttpGet]
+        [Route("")]
         public IActionResult Index()
         {
             return Ok(unitOfWork.Authors.GetAll()?.Select( a => MapToAuthorDTO(a) ));
         }
         [HttpPost]
+        [Route("[Action]")]
         public IActionResult AddAuthor([FromBody] AuthorDTO dto)
         {
             if (!ModelState.IsValid)
@@ -27,6 +30,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(unitOfWork.Authors.Add(MapToAuthor(dto, null)));
         }
         [HttpPost]
+        [Route("[Action]")]
         public IActionResult EditAuthor([FromBody] AuthorDTO dto)
         {
             if(!ModelState.IsValid)
@@ -38,6 +42,7 @@ namespace BookStore.Presentation.Controllers
             return Ok();
         }
         [HttpGet]
+        [Route("[Action]/{id}")]
         public IActionResult GetAuthor([FromQuery] Guid id)
         {
             var author = unitOfWork.Authors.Get(id);
@@ -46,6 +51,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(MapToAuthorDTO(author));
         }
         [HttpPost]
+        [Route("[Action]")]
         public IActionResult DeleteAuthor([FromBody] AuthorDTO dto)
         {
             if (!ModelState.IsValid)

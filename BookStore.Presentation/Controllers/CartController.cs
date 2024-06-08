@@ -9,6 +9,8 @@ using System.Net;
 
 namespace BookStore.Presentation.Controllers
 {
+    [ApiController]
+    [Route("[controller]")]
     public class CartController : ControllerBase
     {
         private readonly IUnitOfWork unitOfWork;
@@ -36,6 +38,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpPost]
+        [Route($"{nameof(AddToCart)}")]
         public IActionResult AddToCart([FromBody] CartedBookDTO dto)
         {
             //to add a particular item/book to cart
@@ -58,6 +61,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpPost]
+        [Route($"{nameof(DeleteFromCart)}")]
         public IActionResult DeleteFromCart([FromBody] CartedBookDTO dto)
         {
             if (!ModelState.IsValid)
@@ -72,6 +76,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpPost]
+        [Route($"{nameof(Checkout)}")]
         public async Task<IActionResult> Checkout()
         {
             var currentUser = await userManager.GetUserAsync(HttpContext.User);
