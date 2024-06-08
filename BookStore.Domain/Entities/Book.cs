@@ -14,6 +14,7 @@ namespace BookStore.Domain.Entities
         public string Title { get => Name; set { Name = value; } }
         [Range(1000, int.MaxValue)]
         public int Year { get; set; }
+        public string? ISBN { get; set; }
         public virtual Author? Author { get; set; }
 
         public virtual Genre? Genre { get; set; }
@@ -21,9 +22,13 @@ namespace BookStore.Domain.Entities
         public Guid GenreId { get; set; }
         [Column(TypeName = "decimal(10,2)")]
         public decimal Price { get; set; }
-        public Book(string bookname) : base(bookname)
+        public Book(string name) : base(name)
         {
 
+        }
+        public Book(): base(string.Empty)
+        {
+            
         }
     }
 }

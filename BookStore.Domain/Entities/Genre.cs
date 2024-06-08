@@ -9,7 +9,11 @@ namespace BookStore.Domain.Entities
     public class Genre : Nameable
     {
         public virtual IEnumerable<Book> Books { get; set; }
-        public Genre(string genre) : base(genre)
+        public Genre(string name) : base(name)
+        {
+            Books = new List<Book>();
+        }
+        public Genre(): base(string.Empty)
         {
             Books = new List<Book>();
         }

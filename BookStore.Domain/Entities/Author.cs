@@ -9,9 +9,13 @@ namespace BookStore.Domain.Entities
     public class Author : Nameable
     {
         public virtual IEnumerable<Book> Publications { get; set; }
-        public Author(string fullname) : base(fullname)
+        public Author(string name) : base(name)
         {
             Publications = new List<Book>();
         }
+        public Author(): base(string.Empty)
+        {
+            Publications = new List<Book>();
+        }        
     }
 }

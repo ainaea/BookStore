@@ -1,17 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using BookStore.Domain.Entities;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace BookStore.Domain.Entities
+namespace BookStore.Presentation.DTOs
 {
-    public class CartedBook : Identifiable
+    public class CartedBookDTO : BaseDTO
     {
         [Range(1, int.MaxValue)]
         public int Quantity { get; set; } = 1;
+        [Required]
         public Guid BookId { get; set; }
+        [Required]
         public Guid CartId { get; set; }
         public virtual Book? Book { get; set; }        
     }
