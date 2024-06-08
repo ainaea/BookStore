@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -16,9 +17,10 @@ namespace BookStore.Infrastructure
         {
             this.config = config;
         }
-        public SqlConnection CreateConnection()
+        public NpgsqlConnection CreateConnection()
         {
-            return new SqlConnection(config.GetConnectionString("BookStoreConnection"));
+            var cfg = config.GetConnectionString("BookStoreConnection");
+            return new Npgsql.NpgsqlConnection (config.GetConnectionString("BookStoreConnection"));
         }
     }
 }
