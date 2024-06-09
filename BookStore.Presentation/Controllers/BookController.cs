@@ -74,7 +74,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("{action}/{title}")]
+        [Route($"{nameof(GetBooksByTitle)}/"+"{title}")]
         public IActionResult GetBooksByTitle([FromQuery] string title)
         {
             var book = unitOfWork.Books.GetAll(b => b.Title.ToLower().Contains(title.ToLower()), includes: include);
@@ -83,7 +83,7 @@ namespace BookStore.Presentation.Controllers
             return Ok(book.Select(b => MapToBookDTO(b)));
         }
         [HttpGet]
-        [Route("{action}/{id}")]
+        [Route($"{nameof(GetBooksByGenre)}/"+"{id}")]
         public IActionResult GetBooksByGenre([FromQuery] Guid id)
         {
             var genre = unitOfWork.Genres.Get(id);
@@ -96,7 +96,7 @@ namespace BookStore.Presentation.Controllers
         }
 
         [HttpGet]
-        [Route("{action}/{year}")]
+        [Route($"{nameof(GetBooksByYear)}/"+"{year}")]
         public IActionResult GetBooksByYear([FromQuery] int year)
         {
             var book = unitOfWork.Books.GetAll(b => b.Year == year, includes: include);
