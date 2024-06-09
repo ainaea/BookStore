@@ -44,6 +44,7 @@ namespace BookStore.Presentation.Controllers
             return Ok();
         }
         [HttpGet]
+        [Route($"{nameof(GetGenre)}" + "/{id}")]
         public IActionResult GetGenre([FromQuery] Guid id)
         {
             var genre = unitOfWork.Genres.Get(id);
